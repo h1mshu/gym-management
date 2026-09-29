@@ -7,6 +7,7 @@ import com.example.gymmanagement.exception.DuplicateResourceException;
 import com.example.gymmanagement.exception.ResourceNotFoundException;
 import com.example.gymmanagement.repository.TrainerRepository;
 import java.util.List;
+import java.util.Locale;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +22,7 @@ public class TrainerService {
     }
 
     public TrainerResponse create(TrainerRequest request) {
-        if (trainerRepository.existsByEmail(request.email().trim().toLowerCase())) {
+        if (trainerRepository.existsByEmail(request.email().trim().toLowerCase(Locale.ROOT))) {
             throw new DuplicateResourceException("A trainer with this email already exists");
         }
         Trainer trainer = new Trainer();
@@ -41,7 +42,7 @@ public class TrainerService {
 
     public TrainerResponse update(Long id, TrainerRequest request) {
         Trainer trainer = getTrainer(id);
-        if (trainerRepository.existsByEmailAndIdNot(request.email().trim().toLowerCase(), id)) {
+        if (trainerRepository.existsByEmailAndIdNot(request.email().trim().toLowerCase(Locale.ROOT), id)) {
             throw new DuplicateResourceException("A trainer with this email already exists");
         }
         apply(trainer, request);
@@ -59,7 +60,7 @@ public class TrainerService {
 
     private void apply(Trainer trainer, TrainerRequest request) {
         trainer.setName(request.name().trim());
-        trainer.setEmail(request.email().trim().toLowerCase());
+        trainer.setEmail(request.email().trim().toLowerCase(Locale.ROOT));
         trainer.setPhone(request.phone());
         trainer.setSpecialization(request.specialization().trim());
     }

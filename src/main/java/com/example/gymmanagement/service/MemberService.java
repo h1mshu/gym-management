@@ -7,6 +7,7 @@ import com.example.gymmanagement.exception.DuplicateResourceException;
 import com.example.gymmanagement.exception.ResourceNotFoundException;
 import com.example.gymmanagement.repository.MemberRepository;
 import java.util.List;
+import java.util.Locale;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +22,7 @@ public class MemberService {
     }
 
     public MemberResponse create(MemberRequest request) {
-        String email = request.email().trim().toLowerCase();
+        String email = request.email().trim().toLowerCase(Locale.ROOT);
         if (memberRepository.existsByEmail(email)) {
             throw new DuplicateResourceException("A member with this email already exists");
         }
@@ -42,7 +43,7 @@ public class MemberService {
 
     public MemberResponse update(Long id, MemberRequest request) {
         Member member = getMember(id);
-        if (memberRepository.existsByEmailAndIdNot(request.email().trim().toLowerCase(), id)) {
+        if (memberRepository.existsByEmailAndIdNot(request.email().trim().toLowerCase(Locale.ROOT), id)) {
             throw new DuplicateResourceException("A member with this email already exists");
         }
         updateFields(member, request);
@@ -60,7 +61,7 @@ public class MemberService {
 
     private void updateFields(Member member, MemberRequest request) {
         member.setName(request.name().trim());
-        member.setEmail(request.email().trim().toLowerCase());
+        member.setEmail(request.email().trim().toLowerCase(Locale.ROOT));
         member.setPhone(request.phone());
         member.setAge(request.age());
         member.setGender(request.gender());
